@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Campaign Character Hub</title>
+<style>
+:root{
+  --bg:#11151b;--panel:#1a212b;--panel2:#202a36;--line:#303c4b;
+  --text:#edf2f7;--muted:#9eacbb;--accent:#d6a85f;--accent2:#f0ca88;
+  --good:#75bd91;--danger:#e18b86;--shadow:0 12px 32px rgba(0,0,0,.22);
+  --radius:16px;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif
+}
+*{box-sizing:border-box} body{margin:0;background:radial-gradient(ellipse at 20% -10%,#273446 0,transparent 42%),var(--bg);color:var(--text)}
+button,input,select,textarea{font:inherit} button{cursor:pointer}
+.app{max-width:1500px;margin:auto;padding:24px}
+header{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-bottom:22px}
+.brand{display:flex;align-items:center;gap:13px}.sigil{width:48px;height:48px;border:1px solid #80643e;border-radius:14px;display:grid;place-items:center;color:var(--accent2);font-size:25px;background:linear-gradient(145deg,#3a3024,#1b2028)}
+h1{font-size:clamp(22px,3vw,31px);margin:0;letter-spacing:.02em}.subtitle{color:var(--muted);font-size:12px;letter-spacing:.15em;text-transform:uppercase;margin-top:4px}
+.actions{display:flex;gap:8px;flex-wrap:wrap}.btn{border:1px solid var(--line);background:var(--panel2);color:var(--text);padding:10px 13px;border-radius:10px;font-weight:650;font-size:13px}.btn:hover{border-color:var(--accent);transform:translateY(-1px)}.btn.primary{background:var(--accent);color:#211a10;border-color:var(--accent)}.btn.ghost{background:transparent}.btn.danger{color:#ffc1bc}
+.notice{border:1px solid #665438;background:#29251e;color:#e7d3ad;border-radius:12px;padding:11px 14px;font-size:13px;line-height:1.5;margin-bottom:18px}
+.layout{display:grid;grid-template-columns:280px minmax(0,1fr);gap:18px;align-items:start}
+.panel{background:linear-gradient(160deg,rgba(32,42,54,.96),rgba(24,31,41,.98));border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}
+.sidebar{padding:15px;position:sticky;top:16px}.side-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.eyebrow{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:750}
+.slot{width:100%;display:flex;align-items:center;gap:11px;padding:11px;border:1px solid transparent;border-radius:12px;background:transparent;color:var(--text);text-align:left;margin:4px 0}
+.slot:hover{background:#263241}.slot.active{background:#302b23;border-color:#80643e}.avatar{width:36px;height:36px;border-radius:10px;background:#2b3948;display:grid;place-items:center;color:var(--accent2);font-weight:800;flex:none}
+.slot.active .avatar{background:#57452c}.slot-name{font-weight:700;font-size:13px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:160px}.slot-meta{font-size:11px;color:var(--muted);display:block;margin-top:3px}
+.slot-status{margin-left:auto;font-size:10px;color:var(--muted)}
+.side-divider{height:1px;background:var(--line);margin:13px 0}.side-actions{display:grid;gap:7px}.side-actions .btn{text-align:left}
+.content{min-width:0}.topline{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:14px}.page-title{font-size:19px;font-weight:800}.save-state{color:var(--good);font-size:12px}
+.tabs{display:flex;gap:6px;overflow-x:auto;padding:5px;margin:0 0 14px;background:#151c24;border:1px solid var(--line);border-radius:12px}
+.tab{white-space:nowrap;border:0;background:transparent;color:var(--muted);padding:9px 12px;border-radius:8px;font-size:12px;font-weight:750}.tab.active{background:#3a3328;color:var(--accent2)}
+.sheet{padding:20px}.section{margin-bottom:23px}.section:last-child{margin-bottom:0}.section-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;padding-bottom:9px;border-bottom:1px solid var(--line)}
+h2{font-size:14px;text-transform:uppercase;letter-spacing:.11em;color:var(--accent2);margin:0}.hint{font-size:11px;color:var(--muted)}
+.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}.grid.two{grid-template-columns:repeat(2,minmax(0,1fr))}.grid.three{grid-template-columns:repeat(3,minmax(0,1fr))}.field{min-width:0}.field label{display:block;color:var(--muted);font-size:11px;font-weight:700;margin:0 0 6px}.field input,.field select,.field textarea{width:100%;background:#121820;border:1px solid #394656;border-radius:9px;color:var(--text);padding:10px 11px;outline:none;min-width:0}.field input:focus,.field textarea:focus,.field select:focus{border-color:var(--accent);box-shadow:0 0 0 2px #d6a85f20}.field textarea{min-height:95px;resize:vertical}.field input[type=number]{font-variant-numeric:tabular-nums}
+.ability-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:9px}.ability{background:#141b23;border:1px solid var(--line);border-radius:12px;padding:10px;text-align:center}.ability strong{display:block;color:var(--accent2);font-size:11px;letter-spacing:.1em}.ability input{width:100%;text-align:center;background:transparent;border:0;border-bottom:1px solid #526071;color:white;font-size:23px;font-weight:800;padding:7px 0;outline:none}.ability small{color:var(--muted);font-size:10px}
+.table-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:11px}table{width:100%;border-collapse:collapse;min-width:580px}th{background:#151c24;color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.08em;text-align:left;padding:10px}td{padding:7px 9px;border-top:1px solid var(--line);font-size:12px}td input,td select{width:100%;min-width:60px;background:#111820;border:1px solid #344253;border-radius:7px;padding:7px;color:var(--text)}td:first-child{font-weight:650}
+.checkline{display:flex;align-items:center;gap:7px;color:var(--muted);font-size:11px}.checkline input{accent-color:var(--accent)}
+.repeat-list{display:grid;gap:9px}.repeat-row{display:grid;grid-template-columns:1.2fr 1fr 1fr 1fr auto;gap:8px;padding:9px;background:#151c24;border:1px solid var(--line);border-radius:10px}.repeat-row input{min-width:0;width:100%;background:#10161d;border:1px solid #344253;border-radius:7px;color:var(--text);padding:8px;font-size:12px}.remove{border:0;background:transparent;color:var(--danger);font-size:18px}
+.spell-list{display:grid;gap:12px}.spell-card{padding:14px}.spell-card .field textarea{min-height:82px}.spell-card .review-name{font-size:16px}.slot-card .stat-value{font-size:23px}
+.empty{padding:22px;text-align:center;color:var(--muted);border:1px dashed #445264;border-radius:12px;font-size:13px}
+.overview-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.stat-card{padding:15px;border:1px solid var(--line);background:#151c24;border-radius:13px}.stat-label{font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted)}.stat-value{font-size:24px;font-weight:850;margin-top:5px}.stat-sub{font-size:11px;color:var(--muted);margin-top:3px}
+.review-list{display:grid;gap:12px}.review-card{border:1px solid var(--line);background:#151c24;border-radius:13px;padding:15px}.review-top{display:flex;justify-content:space-between;gap:12px;align-items:start}.review-name{font-size:17px;font-weight:800}.review-class{font-size:12px;color:var(--muted);margin-top:3px}.review-stats{display:flex;gap:8px;flex-wrap:wrap;margin-top:13px}.pill{border:1px solid #3b4858;border-radius:20px;padding:6px 9px;color:#cbd5df;font-size:11px}.review-actions{display:flex;gap:7px;margin-top:13px}
+.footer{padding:14px 2px;color:var(--muted);font-size:11px;line-height:1.5}
+.modal-backdrop{position:fixed;inset:0;background:#05080dcc;display:none;align-items:center;justify-content:center;padding:20px;z-index:10}.modal-backdrop.show{display:flex}.modal{width:min(600px,100%);background:#202a36;border:1px solid var(--line);border-radius:16px;padding:20px;box-shadow:var(--shadow)}.modal h2{margin-bottom:14px}.modal p{color:var(--muted);font-size:13px;line-height:1.5}.modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:18px}
+.readonly input:disabled,.readonly textarea:disabled,.readonly select:disabled{opacity:.78;color:#cbd5df}
+.hidden{display:none!important}
+@media(max-width:900px){.layout{grid-template-columns:1fr}.sidebar{position:static}.slots{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:3px}.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.ability-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:560px){.app{padding:13px}.brand{align-items:flex-start}.sigil{width:40px;height:40px}.actions{width:100%}header{align-items:flex-start;flex-direction:column}.actions .btn{flex:1}.grid,.grid.two,.grid.three{grid-template-columns:1fr 1fr}.overview-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.repeat-row{grid-template-columns:1fr 1fr}.repeat-row .remove{grid-column:2;justify-self:end}.sheet{padding:14px}}
+@media print{body{background:white;color:#111}.app{max-width:none;padding:0}.sidebar,header,.tabs,.actions,.notice,.footer,.btn,.save-state{display:none!important}.layout{display:block}.panel{box-shadow:none;border:0;background:white}.sheet{padding:0}.field label,.hint,.eyebrow{color:#444}.field input,.field textarea,.field select{background:white;color:#111;border:1px solid #bbb}.section{break-inside:avoid}h2{color:#5d4524}.ability{background:white;border-color:#bbb}.ability input{color:#111}.table-wrap{border-color:#bbb}th{background:#eee;color:#333}td{border-color:#ccc}td input{background:white;color:#111}.content .topline{margin-bottom:8px}}
+
+.auth-wrap{max-width:480px;margin:7vh auto;padding:24px}.auth-card{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:24px;box-shadow:var(--shadow)}.auth-card h2{margin-top:0}.auth-card .field{margin:12px 0}.auth-card input{width:100%;padding:12px;border:1px solid var(--line);border-radius:9px;background:#111820;color:var(--text)}.auth-message{color:var(--muted);font-size:13px;line-height:1.5;margin:12px 0}.auth-actions{display:flex;gap:8px;flex-wrap:wrap}.auth-hidden{display:none!important}.account-bar{display:flex;gap:10px;align-items:center;justify-content:flex-end;margin:0 0 14px;color:var(--muted);font-size:13px}.admin-list{display:grid;gap:10px}.admin-user{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px;border:1px solid var(--line);border-radius:12px;background:var(--panel2)}
+
+</style>
+</head>
+<body>
+<div id="authScreen" class="auth-wrap">
+ <div class="auth-card">
+  <div class="brand"><div class="sigil">✦</div><div><h1>Campaign Character Hub</h1><div class="subtitle">Shared campaign access</div></div></div>
+  <h2 id="authTitle">Sign in</h2>
+  <div id="signupNameWrap" class="field auth-hidden"><label>Display name</label><input id="signupName" autocomplete="name" placeholder="Your player name"></div>
+  <div class="field"><label>Email</label><input id="authEmail" type="email" autocomplete="email" placeholder="you@example.com"></div>
+  <div class="field"><label>Password</label><input id="authPassword" type="password" autocomplete="current-password" placeholder="Password"></div>
+  <div id="authMessage" class="auth-message">Sign in to access your campaign character.</div>
+  <div class="auth-actions"><button class="btn primary" id="signInBtn">Sign in</button><button class="btn" id="showSignupBtn">Create player account</button><button class="btn auth-hidden" id="signUpBtn">Register</button><button class="btn auth-hidden" id="showLoginBtn">Back to sign in</button></div>
+ </div>
+</div>
+<div id="pendingScreen" class="auth-wrap auth-hidden"><div class="auth-card"><h2>Awaiting DM approval</h2><p class="auth-message">Your player account has been created. The Dungeon Master must approve your access before you can view or edit campaign characters. You can sign out and return after approval.</p><button class="btn" id="pendingSignOut">Sign out</button></div></div>
+<div class="app auth-hidden" id="mainApp">
+<header>
+  <div class="brand"><div class="sigil">✦</div><div><h1>Campaign Character Hub</h1><div class="subtitle">A shared table for heroes &amp; their Dungeon Master</div></div></div>
+  <div class="actions">
+    <button class="btn ghost" id="importBtn">Import backup</button>
+    <button class="btn ghost" id="exportBtn">Export all data</button>
+    <button class="btn primary" id="printBtn">Print sheet</button>
+  </div>
+</header>
+<div class="account-bar"><span id="accountLabel"></span><button class="btn" id="managePlayersBtn" style="display:none">Approve players</button><button class="btn" id="signOutBtn">Sign out</button></div>
+<div class="layout">
+  <aside class="panel sidebar">
+    <div class="side-head"><span class="eyebrow">Party roster</span><span class="hint" id="slotCount">0 / 6 filled</span></div>
+    <div class="slots" id="slots"></div>
+    <div class="side-divider"></div>
+    <div class="side-actions">
+      <button class="btn primary" id="newBtn">＋ New character</button>
+      <button class="btn" id="partyBtn">♧ Party / DM overview</button>
+      <button class="btn" id="dmBtn">◉ Toggle DM review mode</button>
+    </div>
+    <div class="footer">Shared campaign records. Players can edit only their own character; the DM can review all approved campaign records.</div>
+  </aside>
+  <main class="content">
+    <div class="topline"><div class="page-title" id="pageTitle">Party overview</div><div class="save-state" id="saveState">● Saved locally</div></div>
+    <div id="partyView" class="panel sheet">
+      <div class="section"><div class="section-head"><h2>Party at a glance</h2><span class="hint">DM review workspace</span></div>
+        <div class="overview-grid" id="partyStats"></div>
+      </div>
+      <div class="section"><div class="section-head"><h2>Character roster</h2><span class="hint">Select a character to inspect or edit</span></div><div class="review-list" id="reviewList"></div></div>
+    </div>
+    <div id="editorView" class="panel hidden">
+      <div class="tabs" id="tabs"></div>
+      <div class="sheet" id="sheet"></div>
+    </div>
+  </main>
+</div>
+<div class="modal-backdrop" id="adminModal"><div class="modal"><h2>Player approvals</h2><div id="adminModalBody"></div><div class="modal-actions"><button class="btn primary" id="adminModalClose">Close</button></div></div></div>
+<div class="modal-backdrop" id="modal">
+  <div class="modal"><h2 id="modalTitle">Confirm</h2><div id="modalBody"></div><div class="modal-actions"><button class="btn" id="modalCancel">Cancel</button><button class="btn primary" id="modalConfirm">Continue</button></div></div>
+</div>
+<input type="file" id="fileInput" accept="application/json,.json" class="hidden">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="./config.js"></script>
+<script>
+(() => {
+const SUPABASE_URL=window.CAMPAIGN_SUPABASE_URL||'';
+const SUPABASE_ANON_KEY=window.CAMPAIGN_SUPABASE_ANON_KEY||'';
+let supabaseClient=null,currentUser=null,currentProfile=null,isAdmin=false,remoteReady=false,ownerIds=[],saveTimer=null,authMode='login';
+
+const KEY='campaign-character-hub-v1';
+const sections=[
+ ['overview','Character Overview'],['combat','Combat & Skills'],['features','Features & Exploration'],['identity','Character & Equipment'],['spells','Spellcasting']
+];
+const blank=()=>({
+ name:'',player:'',classLevel:'',archetype:'',xp:'',heritage:'',culture:'',background:'',destiny:'',inspirationSource:'',inspirationFeature:'',fulfillmentFeature:'',
+ abilities:{Strength:'10',Dexterity:'10',Constitution:'10',Intelligence:'10',Wisdom:'10',Charisma:'10'},
+ saves:{Strength:false,Dexterity:false,Constitution:false,Intelligence:false,Wisdom:false,Charisma:false},
+ proficiency:'',initiative:'',size:'',speed:'',passiveStealth:'',passiveInsight:'',passivePerception:'',
+ hpCurrent:'',hpMax:'',hitDice:'',hitDiceTotal:'',tempHp:'',deathSuccess:'0',deathFailure:'0',fatigue:'0',strife:'0',supply:'',supplyMax:'',carried:'',
+ skills:['Acrobatics','Animal Handling','Arcana','Athletics','Culture','Deception','Engineering','History','Insight','Intimidation','Investigation','Medicine','Nature','Perception','Performance','Persuasion','Religion','Sleight of Hand','Stealth','Survival'].map(n=>({name:n,prof:false,expertise:false,specialty:'',die:''})),
+ tools:'',languages:'',attacks:[],features:'',maneuversKnown:'',traditionsKnown:'',maneuvers:[],explorationKnacks:'',
+ age:'',height:'',weight:'',eyes:'',skin:'',hair:'',appearance:'',backstory:'',allies:'',followers:[{name:'',type:'',ability:''},{name:'',type:'',ability:''},{name:'',type:'',ability:''},{name:'',type:'',ability:''}],
+ equipment:[],bulkyItems:'',maxBulkyItems:'',treasure:{cp:'',sp:'',ep:'',gp:'',pp:''},
+ spellClass:'',spellAbility:'',spellSaveDc:'',spellAttack:'',spellPoints:'',
+ spellSlots:Array.from({length:10},(_,i)=>({level:i,total:0,expended:0})),
+ spellbook:[]
+});
+let data=[blank()],selected=0,activeTab='overview',dmMode=false,partyMode=true;
+function normalizeCharacter(raw){
+ const base=blank(), c={...base,...(raw||{})};
+ c.abilities={...base.abilities,...(raw?.abilities||{})};
+ c.saves={...base.saves,...(raw?.saves||{})};
+ c.skills=Array.isArray(raw?.skills)?raw.skills:base.skills;
+ c.spellSlots=Array.isArray(raw?.spellSlots)?raw.spellSlots:base.spellSlots;
+ c.spellSlots=Array.from({length:10},(_,i)=>({...base.spellSlots[i],...(c.spellSlots[i]||{}),level:i}));
+ if(Array.isArray(raw?.spellbook)){c.spellbook=raw.spellbook;}
+ else {
+   const legacy=Array.isArray(raw?.spells)?raw.spells:[];
+   c.spellbook=[];
+   legacy.forEach((levelRow,i)=>{
+     const names=String(levelRow?.names||'').split(/\\n|[,;]/).map(x=>x.trim()).filter(Boolean);
+     names.forEach(name=>c.spellbook.push({name,level:i,school:'',castingTime:'',range:'',components:'',duration:'',concentration:false,prepared:false,description:'',notes:''}));
+     const total=parseInt(levelRow?.slots,10)||0, expended=parseInt(levelRow?.expended,10)||0;
+     c.spellSlots[i]={level:i,total,expended};
+   });
+ }
+ if(!Array.isArray(c.spellbook))c.spellbook=[];
+ return c;
+}
+function load(){try{const x=JSON.parse(localStorage.getItem(KEY));return Array.isArray(x)?x.map(normalizeCharacter):[blank()]}catch{return [blank()]}}
+function save(){
+ if(!remoteReady){localStorage.setItem(KEY,JSON.stringify(data));return;}
+ document.getElementById('saveState').textContent='● Saving…';
+ clearTimeout(saveTimer);saveTimer=setTimeout(async()=>{
+  const c=data[selected]; if(!c||!currentUser)return;
+  const owner=ownerIds[selected]||currentUser.id;
+  const payload={owner_id:owner,data:c,updated_at:new Date().toISOString()};
+  const {error}=await supabaseClient.from('characters').upsert(payload,{onConflict:'owner_id'});
+  if(error){document.getElementById('saveState').textContent='● Save failed';console.error(error);alert('Could not save character: '+error.message);return;}
+  document.getElementById('saveState').textContent='● Saved to campaign';
+  const {data:rows,error:readErr}=await supabaseClient.from('characters').select('owner_id,data').order('updated_at',{ascending:false});
+  if(!readErr&&isAdmin){const keep=selectedOwner();data=rows.map(r=>normalizeCharacter(r.data));ownerIds=rows.map(r=>r.owner_id);const idx=ownerIds.indexOf(keep);selected=idx>=0?idx:0;renderSidebar();if(partyMode)renderParty();}
+ },450);
+}
+function selectedOwner(){return ownerIds[selected]||currentUser?.id;}
+
+function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function get(o,path){return path.split('.').reduce((a,k)=>a?.[k],o)}
+function set(o,path,val){const p=path.split('.');const last=p.pop();const target=p.reduce((a,k)=>a[k],o);target[last]=val}
+function filled(c){return !!(c.name||c.player||c.classLevel)}
+function field(label,path,type='text',placeholder=''){let val=get(data[selected],path)??'';return `<div class="field"><label>${label}</label>${type==='textarea'?`<textarea data-path="${path}" placeholder="${placeholder}" ${dmMode?'disabled':''}>${esc(val)}</textarea>`:`<input data-path="${path}" type="${type}" value="${esc(val)}" placeholder="${placeholder}" ${dmMode?'disabled':''}>`}</div>`}
+function section(title,body,hint=''){return `<section class="section"><div class="section-head"><h2>${title}</h2>${hint?`<span class="hint">${hint}</span>`:''}</div>${body}</section>`}
+function grid(fields,cls=''){return `<div class="grid ${cls}">${fields.join('')}</div>`}
+function renderSidebar(){
+ const el=document.getElementById('slots');el.innerHTML=data.map((c,i)=>`<button class="slot ${!partyMode&&selected===i?'active':''}" data-slot="${i}"><span class="avatar">${filled(c)?esc((c.name||'H').slice(0,1).toUpperCase()):'＋'}</span><span><span class="slot-name">${esc(c.name||`Character Slot ${i+1}`)}</span><span class="slot-meta">${filled(c)?esc(c.classLevel||'Class not set')+(c.player?' · '+esc(c.player):''):'Empty character slot'}</span></span><span class="slot-status">${filled(c)?'●':'○'}</span></button>`).join('');
+ document.getElementById('slotCount').textContent=`${data.filter(filled).length} characters`;
+ document.getElementById('newBtn').style.display=(isAdmin||data.length>0&&filled(data[0]))?'none':'';
+ document.getElementById('dmBtn').style.display=isAdmin?'':'none';
+ document.getElementById('managePlayersBtn').style.display=isAdmin?'':'none';
+ el.querySelectorAll('[data-slot]').forEach(b=>b.onclick=()=>openCharacter(+b.dataset.slot));
+}
+function openCharacter(i){selected=i;partyMode=false;activeTab='overview';renderSidebar();document.getElementById('partyView').classList.add('hidden');document.getElementById('editorView').classList.remove('hidden');document.getElementById('pageTitle').textContent=data[i].name||`Character Slot ${i+1}`;renderTabs();renderSheet()}
+function renderTabs(){document.getElementById('tabs').innerHTML=sections.map(([id,label])=>`<button class="tab ${activeTab===id?'active':''}" data-tab="${id}">${label}</button>`).join('');document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{activeTab=b.dataset.tab;renderTabs();renderSheet()})}
+function renderSheet(){
+ const c=data[selected];let html='';
+ if(activeTab==='overview'){
+ html+=section('Identity',grid([field('Character name','name'),field('Player name','player'),field('Class & level','classLevel'),field('Archetype','archetype'),field('Experience points','xp','number'),field('Heritage','heritage'),field('Culture','culture'),field('Background','background'),field('Destiny','destiny')]));
+ html+=section('Destiny & inspiration',grid([field('Source of inspiration','inspirationSource'),field('Inspiration feature','inspirationFeature'),field('Fulfillment feature','fulfillmentFeature')],'three'));
+ html+=section('Ability scores',`<div class="ability-grid">${Object.entries(c.abilities).map(([a,v])=>`<div class="ability"><strong>${a}</strong><input data-path="abilities.${a}" type="number" value="${esc(v)}" ${dmMode?'disabled':''}><small>Ability score</small></div>`).join('')}</div>`);
+ html+=section('Proficiency & movement',grid([field('Proficiency bonus','proficiency','number'),field('Initiative','initiative'),field('Size','size'),field('Speed','speed'),field('Passive Stealth','passiveStealth'),field('Passive Insight','passiveInsight'),field('Passive Perception','passivePerception')],'three'));
+ } else if(activeTab==='combat'){
+ html+=section('Combat statistics',grid([field('Current hit points','hpCurrent','number'),field('Maximum hit points','hpMax','number'),field('Temporary hit points','tempHp','number'),field('Hit dice','hitDice'),field('Hit dice total','hitDiceTotal'),field('Initiative','initiative'),field('Death save successes','deathSuccess','number'),field('Death save failures','deathFailure','number'),field('Fatigue','fatigue','number'),field('Strife','strife','number'),field('Supply','supply','number'),field('Supply maximum','supplyMax','number'),field('Carried','carried')],'three'));
+ html+=section('Saving throw proficiencies',`<div class="grid three">${Object.keys(c.saves||blank().saves).map(a=>`<label class="checkline"><input type="checkbox" data-save="${a}" ${(c.saves||blank().saves)[a]?'checked':''} ${dmMode?'disabled':''}> ${a} saving throw</label>`).join('')}</div>`);
+ html+=section('Skills',`<div class="table-wrap"><table><thead><tr><th>Skill</th><th>Proficient</th><th>Expertise</th><th>Specialty</th><th>Die</th></tr></thead><tbody>${c.skills.map((s,i)=>`<tr><td>${esc(s.name)}</td><td><input type="checkbox" data-skill="${i}" data-key="prof" ${s.prof?'checked':''} ${dmMode?'disabled':''}></td><td><input type="checkbox" data-skill="${i}" data-key="expertise" ${s.expertise?'checked':''} ${dmMode?'disabled':''}></td><td><input data-skill="${i}" data-key="specialty" value="${esc(s.specialty)}" ${dmMode?'disabled':''}></td><td><input data-skill="${i}" data-key="die" value="${esc(s.die)}" ${dmMode?'disabled':''}></td></tr>`).join('')}</tbody></table></div>`);
+ html+=section('Attacks & spellcasting actions',repeatEditor('attacks',['Name','Atk Bonus','Damage / Type','Range','Notes'],c.attacks));
+ html+=section('Proficiencies',grid([field('Tool proficiencies','tools','textarea'),field('Languages & other proficiencies','languages','textarea')],'two'));
+ } else if(activeTab==='features'){
+ html+=section('Features & traits',field('Features, traits and abilities','features','textarea'));
+ html+=section('Combat maneuvers',grid([field('Maneuvers known (#)','maneuversKnown'),field('Traditions known','traditionsKnown')],'two')+`<p class="hint">Maneuver save DC: 8 + proficiency bonus + Strength/Dexterity bonus. Exertion points: 2 × proficiency bonus.</p>`+repeatEditor('maneuvers',['Maneuver','Exertion Cost','Activation','Page #'],c.maneuvers));
+ html+=section('Exploration knacks',field('Exploration knacks','explorationKnacks','textarea'));
+ } else if(activeTab==='identity'){
+ html+=section('Appearance',grid([field('Age','age'),field('Height','height'),field('Weight','weight'),field('Eyes','eyes'),field('Skin','skin'),field('Hair','hair')],'three')+field('Character appearance','appearance','textarea'));
+ html+=section('Character backstory & connections',grid([field('Character backstory','backstory','textarea'),field('Allies & organizations','allies','textarea')],'two'));
+ html+=section('Followers & strongholds',repeatEditor('followers',['Name','Type','Ability'],c.followers));
+ html+=section('Equipment',repeatEditor('equipment',['Weight','Item','Properties'],c.equipment));
+ html+=section('Bulky items & treasure',grid([field('Bulky items','bulkyItems','textarea'),field('Maximum bulky items','maxBulkyItems')],'two')+grid([field('Copper pieces','treasure.cp','number'),field('Silver pieces','treasure.sp','number'),field('Electrum pieces','treasure.ep','number'),field('Gold pieces','treasure.gp','number'),field('Platinum pieces','treasure.pp','number')],''));
+ } else if(activeTab==='spells'){
+ html+=section('Spellcasting',grid([field('Spellcasting class','spellClass'),field('Spellcasting ability','spellAbility'),field('Spell save DC','spellSaveDc'),field('Spell attack bonus','spellAttack'),field('Spell points','spellPoints')],'three'));
+ html+=section('Spell slots',`<p class="hint" style="margin:0 0 11px">Track the number of slots available and how many have been expended. Add slots as the character gains them. Cantrips do not use spell slots.</p><div class="overview-grid">${c.spellSlots.slice(1).map((slot,i)=>{const lvl=i+1;return `<div class="stat-card slot-card"><div class="stat-label">Level ${lvl} slots</div><div class="stat-value"><span>${esc(slot.total||0)}</span><span style="font-size:15px;color:var(--muted)"> total</span></div><div class="stat-sub">${esc(slot.expended||0)} expended · ${Math.max(0,(Number(slot.total)||0)-(Number(slot.expended)||0))} remaining</div>${dmMode?'':`<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:10px"><button class="btn" data-slot-action="add" data-level="${lvl}">＋ Add slot</button><button class="btn" data-slot-action="use" data-level="${lvl}" ${(Number(slot.expended)||0)>=(Number(slot.total)||0)?'disabled':''}>Use slot</button><button class="btn" data-slot-action="restore" data-level="${lvl}" ${(Number(slot.expended)||0)<=0?'disabled':''}>Restore</button></div>`}</div>`}).join('')}</div>`);
+ html+=section('Spellbook',`<div class="section-head" style="border:0;padding:0;margin:0 0 12px"><span class="hint">${c.spellbook.length} individual spell${c.spellbook.length===1?'':'s'} recorded</span>${dmMode?'':'<button class="btn primary" id="addSpellBtn">＋ Add spell</button>'}</div><div class="spell-list">${c.spellbook.length?c.spellbook.map((sp,i)=>`<article class="review-card spell-card"><div class="review-top"><div style="flex:1;min-width:0"><div class="review-name">${esc(sp.name||'Untitled spell')}</div><div class="review-class">${sp.level===0?'Cantrip':`Level ${esc(sp.level)}`} · ${esc(sp.school||'School not specified')}${sp.prepared?' · Prepared':''}${sp.concentration?' · Concentration':''}</div></div>${dmMode?'':`<button class="btn danger" data-spell-remove="${i}" title="Remove spell">Remove</button>`}</div><div class="grid three" style="margin-top:12px">${spellInput(i,'name','Spell name',sp.name,'text')}${spellSelect(i,'level','Spell level',sp.level)}${spellInput(i,'school','School',sp.school)}${spellInput(i,'castingTime','Casting time',sp.castingTime)}${spellInput(i,'range','Range',sp.range)}${spellInput(i,'components','Components',sp.components)}${spellInput(i,'duration','Duration',sp.duration)}</div><div class="row" style="gap:18px;flex-wrap:wrap;margin:12px 0"><label class="checkline"><input type="checkbox" data-spell-field="${i}" data-key="prepared" ${sp.prepared?'checked':''} ${dmMode?'disabled':''}> Prepared</label><label class="checkline"><input type="checkbox" data-spell-field="${i}" data-key="concentration" ${sp.concentration?'checked':''} ${dmMode?'disabled':''}> Concentration</label></div><div class="grid two"><div class="field"><label>Spell description / effect</label><textarea data-spell-field="${i}" data-key="description" placeholder="What does the spell do?" ${dmMode?'disabled':''}>${esc(sp.description)}</textarea></div><div class="field"><label>Personal notes</label><textarea data-spell-field="${i}" data-key="notes" placeholder="Components, tactics, reminders, source page..." ${dmMode?'disabled':''}>${esc(sp.notes)}</textarea></div></div></article>`).join(''):'<div class="empty">No spells added yet. Use “Add spell” to start building this character’s spellbook.</div>'}</div>`);
+ }
+ document.getElementById('sheet').innerHTML=`<div class="${dmMode?'readonly':''}">${dmMode?'<div class="notice">DM review mode is on. Editing is disabled.</div>':''}${html}</div>`;
+ document.getElementById('pageTitle').textContent=(c.name||`Character Slot ${selected+1}`)+(dmMode?' · DM review':'');
+ bindFields();
+}
+function spellInput(i,key,label,value,type='text'){
+ return `<div class="field"><label>${label}</label><input data-spell-field="${i}" data-key="${key}" type="${type}" value="${esc(value??'')}" ${dmMode?'disabled':''}></div>`;
+}
+function spellSelect(i,key,label,value){
+ return `<div class="field"><label>${label}</label><select data-spell-field="${i}" data-key="${key}" ${dmMode?'disabled':''}>${Array.from({length:10},(_,n)=>`<option value="${n}" ${Number(value)===n?'selected':''}>${n===0?'Cantrip':`Level ${n}`}</option>`).join('')}</select></div>`;
+}
+function repeatEditor(path,labels,rows){
+ return `<div class="repeat-list" data-repeat="${path}">${rows.length?rows.map((r,i)=>`<div class="repeat-row">${labels.map((l,j)=>`<input data-repeat-path="${path}" data-row="${i}" data-col="${j}" value="${esc(Object.values(r)[j]??'')}" placeholder="${l}" ${dmMode?'disabled':''}>`).join('')}${dmMode?'':'<button class="remove" data-remove="'+path+'" data-index="'+i+'" title="Remove row">×</button>'}</div>`).join(''):'<div class="empty">No entries yet.</div>'}</div>${dmMode?'':`<button class="btn" style="margin-top:9px" data-add="${path}">＋ Add entry</button>`}`;
+}
+function bindFields(){
+ document.querySelectorAll('[data-path]').forEach(el=>el.addEventListener('input',()=>{set(data[selected],el.dataset.path,el.value);save();}));
+ document.querySelectorAll('[data-save]').forEach(el=>el.addEventListener('change',()=>{data[selected].saves=data[selected].saves||blank().saves;data[selected].saves[el.dataset.save]=el.checked;save()}));
+ document.querySelectorAll('[data-skill]').forEach(el=>el.addEventListener('change',()=>{const s=data[selected].skills[+el.dataset.skill];s[el.dataset.key]=el.type==='checkbox'?el.checked:el.value;save()}));
+ document.querySelectorAll('[data-spell-field]').forEach(el=>el.addEventListener(el.type==='checkbox'?'change':'input',()=>{const spell=data[selected].spellbook[+el.dataset.spellField];spell[el.dataset.key]=el.type==='checkbox'?el.checked:(el.dataset.key==='level'?Number(el.value):el.value);save()}));
+ document.querySelectorAll('[data-spell-remove]').forEach(el=>el.onclick=()=>{data[selected].spellbook.splice(+el.dataset.spellRemove,1);renderSheet();save()});
+ const addSpellBtn=document.getElementById('addSpellBtn');
+ if(addSpellBtn)addSpellBtn.onclick=()=>{data[selected].spellbook.push({name:'',level:0,school:'',castingTime:'',range:'',components:'',duration:'',concentration:false,prepared:false,description:'',notes:''});renderSheet();save();const inputs=document.querySelectorAll('[data-spell-field]');const last=[...inputs].find(x=>x.dataset.key==='name'&&+x.dataset.spellField===data[selected].spellbook.length-1);if(last)last.focus()};
+ document.querySelectorAll('[data-slot-action]').forEach(el=>el.onclick=()=>{const level=+el.dataset.level,slot=data[selected].spellSlots[level];if(el.dataset.slotAction==='add')slot.total=(Number(slot.total)||0)+1;if(el.dataset.slotAction==='use'&&(Number(slot.expended)||0)<(Number(slot.total)||0))slot.expended=(Number(slot.expended)||0)+1;if(el.dataset.slotAction==='restore'&&(Number(slot.expended)||0)>0)slot.expended=(Number(slot.expended)||0)-1;renderSheet();save()});
+ document.querySelectorAll('[data-repeat-path]').forEach(el=>el.addEventListener('input',()=>{const arr=data[selected][el.dataset.repeatPath];const keys=Object.keys(arr[0]||{});if(!arr[+el.dataset.row])arr[+el.dataset.row]={};arr[+el.dataset.row][keys[+el.dataset.col]||`field${el.dataset.col}`]=el.value;save()}));
+ document.querySelectorAll('[data-add]').forEach(b=>b.onclick=()=>{const path=b.dataset.add;const templates={attacks:{name:'',atkBonus:'',damageType:'',range:'',notes:''},maneuvers:{maneuver:'',cost:'',activation:'',page:''},followers:{name:'',type:'',ability:''},equipment:{weight:'',item:'',properties:''}};data[selected][path].push(templates[path]);renderSheet();save()});
+ document.querySelectorAll('[data-remove]').forEach(b=>b.onclick=()=>{data[selected][b.dataset.remove].splice(+b.dataset.index,1);renderSheet();save()});
+}
+function renderParty(){
+ const count=data.filter(filled).length;
+ const nums=data.filter(filled).map(c=>Number(c.hpCurrent)).filter(n=>Number.isFinite(n));
+ document.getElementById('partyStats').innerHTML=[
+  [count,'Characters entered','in this campaign'],[data.filter(c=>c.classLevel).length,'Classes recorded','Characters with class & level'],[nums.length?nums.reduce((a,b)=>a+b,0):'—','Combined current HP','Only entered HP values']
+ ].map(x=>`<div class="stat-card"><div class="stat-label">${x[1]}</div><div class="stat-value">${x[0]}</div><div class="stat-sub">${x[2]}</div></div>`).join('');
+ const list=document.getElementById('reviewList');
+ list.innerHTML=data.map((c,i)=>`<div class="review-card"><div class="review-top"><div><div class="review-name">${esc(c.name||`Character Slot ${i+1}`)}</div><div class="review-class">${esc(c.classLevel||'Class / level not entered')}${c.archetype?' · '+esc(c.archetype):''}${c.player?' · Player: '+esc(c.player):''}</div></div><span class="pill">${filled(c)?'Occupied':'Empty slot'}</span></div><div class="review-stats"><span class="pill">HP ${esc(c.hpCurrent||'—')} / ${esc(c.hpMax||'—')}</span><span class="pill">Prof. ${esc(c.proficiency||'—')}</span><span class="pill">Speed ${esc(c.speed||'—')}</span><span class="pill">AC not included on source sheet</span></div><div class="review-actions"><button class="btn" data-review="${i}">Review sheet</button>${(!dmMode||!isAdmin)?`<button class="btn" data-edit="${i}">Edit</button>`:''}</div></div>`).join('');
+ list.querySelectorAll('[data-review]').forEach(b=>b.onclick=()=>{dmMode=isAdmin;document.getElementById('dmBtn').textContent=dmMode?'◉ DM review mode: ON':'◉ Toggle DM review mode';openCharacter(+b.dataset.review);});
+ list.querySelectorAll('[data-edit]').forEach(b=>b.onclick=()=>{dmMode=false;document.getElementById('dmBtn').textContent='◉ Toggle DM review mode';openCharacter(+b.dataset.edit);});
+}
+function showParty(){partyMode=true;document.getElementById('partyView').classList.remove('hidden');document.getElementById('editorView').classList.add('hidden');document.getElementById('pageTitle').textContent='Party overview';renderSidebar();renderParty()}
+function modal(title,body,confirmText,fn){const m=document.getElementById('modal');document.getElementById('modalTitle').textContent=title;document.getElementById('modalBody').innerHTML=body;m.classList.add('show');document.getElementById('modalConfirm').textContent=confirmText;document.getElementById('modalConfirm').onclick=()=>{m.classList.remove('show');fn()};document.getElementById('modalCancel').onclick=()=>m.classList.remove('show')}
+document.getElementById('newBtn').onclick=()=>{let i=data.findIndex(c=>!filled(c));if(i<0){modal('All six slots are occupied','You can edit an existing character or clear a slot before adding another.','Got it',()=>{});return}openCharacter(i)};
+document.getElementById('partyBtn').onclick=showParty;
+document.getElementById('dmBtn').onclick=()=>{dmMode=!dmMode;document.getElementById('dmBtn').textContent=dmMode?'◉ DM review mode: ON':'◉ Toggle DM review mode';if(partyMode)renderParty();else renderSheet()};
+document.getElementById('exportBtn').onclick=()=>{const blob=new Blob([JSON.stringify({app:'Campaign Character Hub',version:1,exported:new Date().toISOString(),characters:data},null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='campaign-character-backup.json';a.click();URL.revokeObjectURL(a.href)};
+document.getElementById('importBtn').onclick=()=>document.getElementById('fileInput').click();
+document.getElementById('fileInput').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const parsed=JSON.parse(r.result);const incoming=Array.isArray(parsed)?parsed:parsed.characters;if(!Array.isArray(incoming))throw new Error('The backup does not contain a character list.');modal('Import character backup','Importing replaces the six character slots currently stored in this browser. Export a backup first if you want to preserve them.','Import backup',()=>{data=incoming.map(normalizeCharacter);ownerIds=data.map(()=>currentUser.id);save();showParty()})}catch(err){alert('Could not import file: '+err.message)}};r.readAsText(f);e.target.value=''};
+document.getElementById('printBtn').onclick=()=>{if(partyMode){alert('Open a character sheet first, then choose Print sheet.');return}window.print()};
+
+function setAuthMessage(msg){document.getElementById('authMessage').textContent=msg;}
+function setAuthMode(mode){authMode=mode;const signup=mode==='signup';document.getElementById('authTitle').textContent=signup?'Create player account':'Sign in';document.getElementById('signupNameWrap').classList.toggle('auth-hidden',!signup);document.getElementById('signInBtn').classList.toggle('auth-hidden',signup);document.getElementById('showSignupBtn').classList.toggle('auth-hidden',signup);document.getElementById('signUpBtn').classList.toggle('auth-hidden',!signup);document.getElementById('showLoginBtn').classList.toggle('auth-hidden',!signup);setAuthMessage(signup?'Register with your email. Your account will need DM approval.':'Sign in to access your campaign character.');}
+function showScreen(id){['authScreen','pendingScreen','mainApp'].forEach(x=>document.getElementById(x).classList.toggle('auth-hidden',x!==id));}
+async function startSession(session){
+ currentUser=session.user;
+ const {data:profile,error:pErr}=await supabaseClient.from('profiles').select('*').eq('id',currentUser.id).maybeSingle();
+ if(pErr){setAuthMessage('Could not load your player profile: '+pErr.message);await supabaseClient.auth.signOut();showScreen('authScreen');return;}
+ currentProfile=profile; if(!profile||!profile.approved){showScreen('pendingScreen');return;}
+ isAdmin=profile.role==='admin';dmMode=false;remoteReady=false;
+ const {data:rows,error}=await supabaseClient.from('characters').select('owner_id,data,updated_at').order('updated_at',{ascending:false});
+ if(error){alert('Could not load campaign characters: '+error.message);return;}
+ if(isAdmin){const {data:people}=await supabaseClient.from('profiles').select('id,email,display_name');const names=new Map((people||[]).map(p=>[p.id,p.display_name||p.email||'Player']));data=rows.map(r=>{const c=normalizeCharacter(r.data);if(!c.player)c.player=names.get(r.owner_id)||'Player';return c;});ownerIds=rows.map(r=>r.owner_id);}
+ else {const mine=rows.find(r=>r.owner_id===currentUser.id);data=[mine?normalizeCharacter(mine.data):blank()];ownerIds=[currentUser.id];}
+ if(data.length===0&&isAdmin){data=[];ownerIds=[];}
+ selected=0;remoteReady=true;
+ document.getElementById('accountLabel').textContent=(profile.display_name||currentUser.email)+(isAdmin?' · DM':' · Player');
+ document.getElementById('importBtn').style.display='none';document.getElementById('exportBtn').style.display=isAdmin?'':'none';
+ document.getElementById('dmBtn').textContent='◉ Toggle DM review mode';
+ showScreen('mainApp');showParty();
+ if(window.campaignRealtimeChannel){await supabaseClient.removeChannel(window.campaignRealtimeChannel);}
+ window.campaignRealtimeChannel=supabaseClient.channel('campaign-character-updates').on('postgres_changes',{event:'*',schema:'public',table:'characters'},async()=>{if(!isAdmin||!remoteReady)return;const keep=selectedOwner();const {data:latest,error:latestErr}=await supabaseClient.from('characters').select('owner_id,data,updated_at').order('updated_at',{ascending:false});if(latestErr)return;data=latest.map(r=>normalizeCharacter(r.data));ownerIds=latest.map(r=>r.owner_id);const idx=ownerIds.indexOf(keep);selected=idx>=0?idx:0;renderSidebar();if(partyMode)renderParty();}).subscribe();
+}
+async function signOut(){remoteReady=false;currentUser=null;currentProfile=null;isAdmin=false;data=[blank()];ownerIds=[];await supabaseClient.auth.signOut();showScreen('authScreen');}
+async function refreshApprovals(){
+ const {data:profiles,error}=await supabaseClient.from('profiles').select('id,email,display_name,approved,created_at').eq('approved',false).order('created_at');
+ const body=document.getElementById('adminModalBody');
+ if(error){body.textContent='Could not load registrations: '+error.message;return;}
+ body.innerHTML=profiles.length?'<div class="admin-list">'+profiles.map(p=>`<div class="admin-user"><div><strong>${esc(p.display_name||'New player')}</strong><div class="hint">${esc(p.email||'')}</div></div><button class="btn primary" data-approve="${esc(p.id)}">Approve</button></div>`).join('')+'</div>':'<p class="auth-message">No players are waiting for approval.</p>';
+ body.querySelectorAll('[data-approve]').forEach(btn=>btn.onclick=async()=>{btn.disabled=true;const {error}=await supabaseClient.from('profiles').update({approved:true}).eq('id',btn.dataset.approve);if(error){alert('Approval failed: '+error.message);btn.disabled=false;}else refreshApprovals();});
+}
+document.getElementById('showSignupBtn').onclick=()=>setAuthMode('signup');document.getElementById('showLoginBtn').onclick=()=>setAuthMode('login');
+document.getElementById('signInBtn').onclick=async()=>{const email=document.getElementById('authEmail').value.trim(),password=document.getElementById('authPassword').value;setAuthMessage('Signing in…');const {data,error}=await supabaseClient.auth.signInWithPassword({email,password});if(error){setAuthMessage(error.message);return;}await startSession(data.session);};
+document.getElementById('signUpBtn').onclick=async()=>{const email=document.getElementById('authEmail').value.trim(),password=document.getElementById('authPassword').value,name=document.getElementById('signupName').value.trim();if(!name){setAuthMessage('Please enter your display name.');return;}setAuthMessage('Creating account…');const {data,error}=await supabaseClient.auth.signUp({email,password,options:{data:{display_name:name}}});if(error){setAuthMessage(error.message);return;}if(data.session){await startSession(data.session);}else{setAuthMessage('Registration submitted. Check your email to confirm your account, then sign in. Your DM must approve you before campaign access is granted.');}};
+document.getElementById('signOutBtn').onclick=signOut;document.getElementById('pendingSignOut').onclick=signOut;
+document.getElementById('managePlayersBtn').onclick=async()=>{document.getElementById('adminModal').classList.add('show');await refreshApprovals();};document.getElementById('adminModalClose').onclick=()=>document.getElementById('adminModal').classList.remove('show');
+if(!SUPABASE_URL||!SUPABASE_ANON_KEY||!window.supabase?.createClient){showScreen('authScreen');setAuthMessage('Setup required: add your Supabase project URL and anon public key to config.js, then reload.');document.getElementById('signInBtn').disabled=true;document.getElementById('showSignupBtn').disabled=true;}
+else {supabaseClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);showScreen('authScreen');supabaseClient.auth.getSession().then(({data})=>{if(data.session)startSession(data.session);});supabaseClient.auth.onAuthStateChange((_event,session)=>{if(session&&!currentUser)startSession(session);});}
+
+})();
+</script>
+</body>
+</html>
